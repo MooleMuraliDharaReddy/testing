@@ -1,0 +1,240 @@
+replicaCount: 1
+
+image:
+  repository: netboxcommunity/netbox
+  tag: v2.8.3
+  pullPolicy: IfNotPresent
+
+superuser:
+  name: admin
+  email: admin@example.com
+  password: 
+  apiToken: 
+  #password: admin
+  #apiToken: 0123456789abcdef0123456789abcdef01234567
+
+
+
+skipStartupScripts: true
+
+allowedHosts:
+  - '*'
+banner:
+  # Optionally display a persistent banner at the top and/or bottom of every
+  # page. HTML is allowed.
+  top: ''
+  bottom: ''
+
+basePath: ''
+
+#Caching (Default 15 mins, Set to 0 to disable caching)
+cacheTimeout: 900
+
+cors:
+  originAllowAll: false
+  originWhitelist: []
+  originRegexWhitelist: []
+  #  - '^(https?://)?(\w+\.)?example\.com$'
+
+# Debugging
+debug: false
+
+# Email settings
+email:
+  server: localhost
+  port: 25
+  username: ''
+  password: ''
+  timeout: 10
+  from: ''
+
+# Enforcement of unique IP space can be toggled on a per-VRF basis. To enforce
+# unique IP space within the global table (all prefixes and IP addresses not
+# assigned to a VRF), set enforceGlobalUnique to True.
+enforceGlobalUnique: true
+
+# Exempt certain models from the enforcement of view permissions. Models listed
+# here will be viewable by all users and by anonymous users. List models in the
+# form `<app>.<model>`. Add '*' to this list to exempt all models.
+exemptViewPermissions: []
+#  - dcim.site
+#  - dcim.region
+#  - ipam.prefix
+
+
+
+# Setting this to True will permit only authenticated users to access any part
+# of NetBox. By default, anonymous users are permitted to access most data in
+# NetBox (excluding secrets) but not make any changes.
+loginRequired: false
+
+# Setting this to True will display a "maintenance mode" banner at the top of
+# every page.
+maintenanceMode: false
+
+# An API consumer can request an arbitrary number of objects by appending the
+# "limit" parameter to the URL (e.g. "?limit=1000"). This setting defines the
+# maximum limit. Setting it to 0 or None will allow an API consumer to request
+# all objects by specifying "?limit=0".
+maxPageSize: 1000
+
+napalm:
+  # Credentials that NetBox will use to access live devices.
+  username: ''
+  password: ''
+
+  # NAPALM timeout (in seconds). (Default: 30)
+  timeout: 30
+
+  # NAPALM optional arguments (see
+  # http://napalm.readthedocs.io/en/latest/support/#optional-arguments).
+  # Arguments must be provided as a dictionary.
+  args: {}
+
+# Determine how many objects to display per page within a list. (Default: 50)
+paginateCount: 100
+
+# When determining the primary IP address for a device, IPv6 is preferred over
+# IPv4 by default. Set this to True to prefer IPv4 instead.
+preferIPv4: true
+
+# Expose Prometheus monitoring metrics at the HTTP endpoint '/metrics'
+metricsEnabled: true
+
+# Webhooks can be disabled to remove the dependency on Redis.
+webhooksEnabled: false
+
+# Time zone (default: UTC)
+timeZone: UTC
+
+# Date/time formatting. See the following link for supported formats:
+# https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
+dateFormat: 'N j, Y'
+shortDateFormat: 'Y-m-d'
+timeFormat: 'g:i a'
+shortTimeFormat: 'H:i:s'
+dateTimeFormat: 'N j, Y g:i a'
+shortDateTimeFormat: 'Y-m-d H:i'
+
+# If provided, this should be a 50+ character string of random characters. It
+# will be randomly generated if left blank.
+secretKey:
+
+## Provide passwords using existing secret
+# If set, this Secret must contain the following keys:
+# - db_password: database password (if postgresql.enabled is false and
+#     externalDatabase.existingSecretName is blank)
+# - email_password: SMTP user password
+# - napalm_password: NAPALM user password
+# - redis_password: Redis password (if redis.enabled is false and
+#     externalRedis.existingSecretName is blank)
+# - secret_key: session encryption token (50+ random characters)
+existingSecret:
+
+postgresql:
+  ## Deploy PostgreSQL using bundled chart
+  # To use an external database, set this to false and configure the settings
+  # under externalDatabase
+  enabled: false
+  postgresqlUsername: netbox
+  postgresqlDatabase: netbox
+
+## External database settings
+# These are used if postgresql.enabled is false, and are ignored otherwise
+externalDatabase:
+  host: 
+  port: 5432
+  database: 
+  username: 
+  password: ""
+  existingSecretName: "netbox"
+  existingSecretKey: netbox-auth
+
+redisDatabase: 0
+redisCacheDatabase: 1
+redisTimeout: 300
+redisSsl: false
+
+redis:
+  enabled: true
+
+externalRedis:
+  host:
+  port: 6379
+  password: ""
+  existingSecretName: "redisdb"
+  existingSecretKey: "redis-auth"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+## Storage configuration for media
+persistence:
+  enabled: false
+  existingClaim: ""
+  subPath: ""
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
+## Storage configuration for reports
+reportsPersistence:
+  enabled: false
+  existingClaim: ""
+  subPath: ""
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 5Gi
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  hosts:
+    - host: 
+      paths:
+        - /
+
+  #tls:
+    #- secretName: 
+      #hosts:
+        #- 
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+nginx:
+  image:
+    repository: nginx
+    tag: 1.16.1-alpine
+    pullPolicy: IfNotPresent
+
+  resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+updateStrategy: {}
+
+affinity: {}
+
+extraEnvs: []
+
+extraVolumeMounts: []
+
+extraVolumes: []
+
+extraContainers: []
+
+extraInitContainers: []
